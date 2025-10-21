@@ -4,11 +4,10 @@
   "description": "Express backend for adminFrontend (Vercel-ready)",
   "main": "server.js",
   "type": "module",
-  "scripts": {
-  "dev": "vercel dev",
-  "build": "echo 'No build needed for backend'",
-  "start": "node api/main.js"
-},
+ "scripts": {
+    "build": "echo 'No build needed for backend'",
+    "start": "vercel dev"
+  },
   "engines": {
     "node": ">=18.x"
   },
