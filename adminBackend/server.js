@@ -58,33 +58,41 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 6000;
 
-// Middleware
+// ✅ Middleware
 app.use(cors());
 app.use(bodyParser.json({ limit: '20mb' }));
 app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
 
-// ⚠️ Static uploads (local only — won’t persist on Vercel)
+// ⚠️ Local static uploads (ignored on Vercel)
 app.use('/uploads', express.static(path.resolve('uploads')));
 
-// Serve React frontend
-app.use(express.static(path.join(__dirname, '../adminFrontend/build')));
-
-// API routes
+// ✅ API routes
 app.use('/api/admin/main', mainRoutes);
 app.use('/api/auth', auth);
 
-// Catch-all for React Router
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../adminFrontend/build', 'index.html'));
+// ✅ Test route for Vercel verification
+app.get('/api/test', (req, res) => {
+  res.json({ message: '✅ Backend working properly on Vercel!' });
 });
+
+// ⚠️ Serve React frontend only when running locally
+if (process.env.NODE_ENV !== 'production') {
+  app.use(express.static(path.join(__dirname, '../adminFrontend/build')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../adminFrontend/build', 'index.html'));
+  });
+}
 
 // ✅ Export app for Vercel
 export default app;
 
-// ✅ Run locally (not on Vercel)
+// ✅ Local server
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server running locally on http://localhost:${PORT}`);
   });
 }
+
+
 
